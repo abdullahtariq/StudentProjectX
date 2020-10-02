@@ -1,0 +1,151 @@
+<h1 align="center" style="font-size: 50px">Student Edit Form</h1>
+ 
+<table cellspacing="20" cellpadding="20" align="center">
+<form method="POST" id="studentForm" onsubmit="editStudent(event)">
+  <input type="hidden" id="studentId" name="id"  value=<%= studentId %> />
+  <tr>
+    <td >First Name:</td>
+    <td><input type="text" name="firstName"></td>
+  </tr>
+
+  <tr>
+    <td>Last Name:</td>
+    <td><input type="text" name="lastName"></td>
+  </tr>
+  <tr>
+    <td>Father Name:</td>
+    <td><input type="text" name="fatherName"></td>
+  </tr>
+
+  <tr>
+    <td>Date of Birth:</td>
+    <td><input type="Date" name="dob"></td>
+  </tr>
+  <tr>
+    <td>Class:
+
+    </td>
+    <td><select name="class" style="border: 2px solid black">
+        <option value="BSCS-1">BSCS-1</option>
+        <option value="BSCS-2">BSCS-2</option>
+        <option value="BSIT-1">BSIT-1</option>
+        <option value="BSIT-2">BSIT-2</option>
+      </select></td>
+  </tr>
+  <tr>
+    <td>Username:</td>
+    <td><input type="text" name="username"></td>
+  </tr>
+  <tr>
+    <td>Password:</td>
+    <td><input type="Password" name="password"></td>
+  </tr>
+  <tr>
+    <td>Registration:</td>
+    <td><input type="text" name="registration"></td>
+  </tr>
+  <tr>
+    <td>address:</td>
+    <td><input type="text" name="address"></td>
+  </tr>
+  <tr>
+    <td>Gender:</td>
+    <td>Male<input value="male" type="radio" name="gender">
+      Female<input value="female" type="radio" name="gender">
+
+      </td>
+  </tr>
+
+  <tr>
+    <td>Phone No:</td>
+    <td><input type="No" name="phone"></td>
+  </tr>
+
+  <tr>
+    <td>Email:</td>
+    <td><input type="Email" name="email"></td>
+  </tr>
+  <tr>
+
+
+    <td colspan="2" align="center">
+      <button type="submit" name="submit">Update
+      </button>
+
+      <button type="reset" name="resetForm">Reset
+      </button>
+
+    </td>
+
+    </tr>
+
+</form>
+</table>
+
+<script>
+  const editStudent = function(event) {
+    event.preventDefault();
+    var student = {
+      id: event.target.id.value,
+      firstName : event.target.firstName.value,
+      lastName : event.target.lastName.value,
+      fatherName : event.target.fatherName.value,
+      dob : event.target.dob.value,
+      class : event.target.class.value,
+      username : event.target.username.value,
+      password : event.target.password.value,
+      gender : event.target.gender.value,
+      phone : event.target.phone.value,
+      email : event.target.email.value,
+      regNumber : event.target.registration.value,
+      address : event.target.address.value
+    }
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        //document.getElementById("demo").innerHTML = this.responseText;
+        //document.getElementById('responseFromServer').innerHTML = this.responseText
+        console.log(this.responseText);
+        alert('Student updated Successfully');
+        window.location.href="/"
+        //document.getElementById('studentForm').reset();
+      }
+    };
+    xhttp.open("POST", "/update", true);
+    xhttp.setRequestHeader("Content-type","application/json");
+    xhttp.send(JSON.stringify(student));
+  }
+
+  const loadStudentRecord = function(){
+    var studentId = document.getElementById('studentId').value;
+    const url = "/getStudentDetails/"+ studentId
+    console.log(studentId);
+    var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          //document.getElementById("demo").innerHTML = this.responseText;
+          //document.getElementById('responseFromServer').innerHTML = this.responseText
+          const student = this.responseText;
+          const studentRecord = JSON.parse(student);
+          const studenform = document.getElementById('studentForm')
+          studenform.firstName.value =  studentRecord.firstName
+          studenform.lastName.value =  studentRecord.lastName
+          studenform.fatherName.value =  studentRecord.fatherName
+          studenform.dob.value =  studentRecord.dob
+          studenform.class.value =  studentRecord.class
+          studenform.username.value =  studentRecord.username
+          studenform.password.value =  studentRecord.password
+          studenform.gender.value =  studentRecord.gender
+          studenform.phone.value =  studentRecord.phone
+          studenform.email.value =  studentRecord.email
+          studenform.registration.value =  studentRecord.regNumber
+          studenform.address.value =  studentRecord.address
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.send();
+  }
+
+  loadStudentRecord();
+
+</script>

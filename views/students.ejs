@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div class="container mb-3">
+      <h1><%= title %></h1>
+      <p class="float-left mr-5">Welcome to <%= title %></p>
+      <a href="/signup" class="btn btn-primary" style="margin-left:14.5%;">Add New Student</a>
+    </div>
+    <div id="responseFromServer">
+      <table id="studentTable">
+        <thead>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone</th>
+            <th>Student Registration</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </thead>
+        <tbody id="student-records">
+
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script>
+      const getUserInfo = sessionStorage.getItem('studentLogin')
+      if(!getUserInfo){
+        window.location.href= '/login';
+      }
+       // AJAX BASICS
+      var loadajax = function (){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          //document.getElementById("demo").innerHTML = this.responseText;
+          //document.getElementById('responseFromServer').innerHTML = this.responseText
+          const students = this.responseText;
+          const studentsArray = JSON.parse(students);
+          console.log(students);
+          console.log(studentsArray);
+          const studentsBody = studentsArray.map((student) => {
+            return (`<tr>
+                      <td>`+student.firstName+`</td>
+                      <td>`+student.lastName+`</td>
+                      <td>`+student.phone+`</td>
+                      <td>`+student.regNumber+`</td>
+                      <td>`+student.approved+`</td>
+                      <td> 
+                        <a class="btn btn-primary" href="/edit?id=`+student._id+`">Edit Student</a>
+                        <button class="btn btn-danger" onclick="deleteStudent('`+student._id+`')" type="button">Delete</button> 
+                      </td> 
+                    </tr>`)
+          })
+          let studentRecords = studentsBody.toString().replace(/,/g, '')
+          document.getElementById('student-records').innerHTML= studentRecords
+        }
+      };
+      xhttp.open("GET", "/students", true);
+      xhttp.send();
+    }
+
+    loadajax()
+
+    // Edit and Delete functions 
+
+    const editStudent = (id) => {
+      alert('Edit function called')
+    }
+
+    const deleteStudent = (id) => {
+      // write ajax call to request and delete the student
+      // AJAX BASICS
+      var conf = confirm("Are you sure you want to delete this record");
+      if(conf == false){
+        return false
+      } 
+
+      var url = "/delete/"+id
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          const students = this.responseText;
+          const studentsArray = JSON.parse(students);
+          alert(studentsArray.message)
+          loadajax()
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.send();
+}
+
+  </script>
+</html>

@@ -1,0 +1,54 @@
+<h1 align="center" style="font-size: 50px">Student Login  Form</h1>
+<table cellspacing="20" cellpadding="20" align="center">
+  <form method="POST" onsubmit="loginStudent(event)">
+    <tr>
+      <td>Username:</td>
+      <td><input type="text" name="username"></td>
+    </tr>
+    <tr>
+      <td>Password:</td>
+      <td><input type="Password" name="password"></td>
+    </tr>
+    <tr>
+      
+      
+      <td colspan="2" align="center">
+        <button type="submit" name="submit">Submit
+        </button>
+        
+        <button type="reset" name="reset">Reset
+        </button>
+  
+      </td>
+  
+      </tr>
+  
+  </form>
+  </table>
+  <script>
+    const loginStudent = function(event){
+      event.preventDefault();
+      var student = {
+        username : event.target.username.value,
+        password : event.target.password.value
+      }
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          //document.getElementById("demo").innerHTML = this.responseText;
+          //document.getElementById('responseFromServer').innerHTML = this.responseText
+          const response = JSON.parse(this.responseText)
+          if(response && response.status==true){
+            alert('You have been logged in successfully');
+            sessionStorage.setItem('studentLogin', response.message.username)
+            window.location.href = '/'
+          }
+          
+          //document.getElementById('student-records').innerHTML= studentsBody.toString()
+        }
+      };
+      xhttp.open("POST", "/apiLogin", true);
+      xhttp.setRequestHeader("Content-type","application/json");
+      xhttp.send(JSON.stringify(student));
+    }
+  </script>
